@@ -9,7 +9,7 @@ const CLIENT_SECRET="c7e50afc03dc417ca2181cf3d81664ff";
 function App() {
   const [searchInput,setSearchInput] =useState("");
   const[accessToken,setAccessToken]=useState("");
-
+  const[Tracks,setTracks]=useState([]);
   useEffect(()=>{
     //se usa para inicializar solo una vez la api
     var authParameters={
@@ -34,17 +34,13 @@ function App() {
         'Authorization': 'Bearer '+accessToken
       }
     }
-    var artistID =await fetch('https://api.spotify.com/v1/search?q='+searchInput+'&type=track%2Cartist',artistParameters)
+    var allTracks =await fetch('https://api.spotify.com/v1/search?q='+searchInput+'&type=track',artistParameters)
     .then(response=> response.json())
-    .then(data=>{return data.artists.items[0].id && data.tracks})
+    .then(data=>{setTracks(data.tracks.items)})
+    console.log(Tracks)
     
-    console.log(artistID.items)
-    /*var tracks = await fetch('https://api.spotify.com/v1/artist/'+ artistID.href +'/trucks'+artistID.items)
-    .then(response=>response.json())
-    .then(data=>{
-      console.log(data);
-    })
-    */
+    
+  
   }
   
 
@@ -72,16 +68,17 @@ function App() {
     </Container>
     <Container>
       <Row className="mx-2 row row-cols-4">
-
-      
-      <Card>
-      <Card.Img src="#"/>
+      {Tracks.map((track,i)=>{
+        console.log(track)
+          return (
+            <Card>
+      <Card.Img src={track.album.images[0].url}/>
       <Card.Body>
-        <Card.Title> Album Name Here</Card.Title>
+        <Card.Title> {track.artists[0].name}-{track.name}</Card.Title>
       </Card.Body>
 
       </Card>
-      
+      )})}      
       </Row>
     </Container>
       
